@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>NCAD</title>
+	<meta charset="UTF-8">
+
+	<script type="text/javascript" src="lib/toSource.js"></script>
+	<script type="text/javascript" src="lib/MooTools-Core-1.6.0.js"></script>
+	<script type="text/javascript" src="out/NLA.js"></script>
+	<script type="text/javascript" src="weapons.js"></script>
+	<script type="text/javascript" src="mpchars.js"></script>
+	<script type="text/javascript" src="out/main.js"></script>
+
+	<style type="text/css">
+		@font-face {
+			font-family: Biomass;
+			src: url(fonts/Biomass2-Light.woff2) format('woff2'),
+			url(fonts/Biomass2-Light.woff) format('woff');
+		}
+
+		@font-face {
+			font-family: BiomassBold;
+			src: url(fonts/Biomass2-Bold.woff2) format('woff2'),
+			url(fonts/Biomass2-Bold.woff) format('woff');
+		}
+
+		@font-face {
+			font-family: EASSans;
+			src: url(fonts/EASSans-Light.woff2) format('woff2'),
+			url(fonts/EASSans-Light.woff) format('woff');
+		}
+
+		body {
+			font-family: EASSans, Verdana, sans-serif;
+			column-width: 25em;
+		}
+
+		.w {
+			cursor: zoom-in;
+		}
+
+		.catname {
+			padding-left: 3em;
+			font-weight: bold;
+		}
+
+		.bullets {
+			padding-top: 0.3em;
+		}
+
+		.wname {
+			display: inline-block;
+			width: 10em;
+		}
+
+		.bullet {
+			content: " ";
+			background-color: #999999;
+			display: inline-block;
+			border-radius: 50%;
+			width: 1.4em;
+			height: 1.4em;
+			margin-left: 0.2em;
+			color: white;
+			font-size: 0.8em;
+			text-align: center;
+		}
+
+		.bullet.on {
+			background-color: #2B81AF;
+		}
+
+		#header {
+			background-color: #2B81AF;
+			padding: 0.4em;
+			color: white;
+			margin-bottom: 1em;
+		}
+		#saveinfo {
+			font-size: smaller;
+		}
+	</style>
+	<script id="templateWCat" type="x-template">
+		<div id="wcat-$wcat"><div class="catname">$wcat <span class="prog"></span></div></div>
+	</script>
+	<script id="templateWeapon" type="x-template">
+		<div class="w" id="sn-$sn">
+			<span class="wname">$name <span class="wlvl"></span></span>
+			<span class="bullets"><span class="bullet"></span><span class="bullet"></span><span
+					class="bullet"></span><span class="bullet"></span><span class="bullet"></span><span
+					class="bullet"></span><span class="bullet"></span><span class="bullet"></span><span
+					class="bullet"></span><span class="bullet"></span></span></div>
+	</script>
+	<script id="templateChar" type="x-template">
+		<div class="w" id="sn-$sn">
+			<span class="wname">$name</span>
+			<span class="bullets"><span class="bullet">1</span><span class="bullet">2</span><span
+					class="bullet">3</span><span class="bullet">P</span><span class="bullet">L</span></span></div>
+	</script>
+</head>
+<body>
+	<div id="header">MEA MP Checklist <span id="saveinfo"></span></div>
+	<div id="weapons"></div>
+
+	<div id="chars"><h3>Characters <span id="charTotal"></span></h3></div>
+</body>
+</html>
