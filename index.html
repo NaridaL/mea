@@ -34,16 +34,18 @@
 
 		body {
 			font-family: EASSans, Verdana, sans-serif;
-			column-width: 25em;
+			column-width: 360px;
 		}
 
 		.w {
 			cursor: zoom-in;
+			clear: both;
 		}
 
 		.catname {
 			padding-left: 3em;
 			font-weight: bold;
+			clear: both;
 		}
 
 		.bullets {
@@ -51,10 +53,13 @@
 		}
 
 		.wname {
-			display: inline-block;
 			width: 10em;
 		}
 
+		.bullets {
+			float: right;
+			display: inline-block;
+		}
 		.bullet {
 			content: " ";
 			background-color: #999999;
@@ -79,6 +84,7 @@
 			margin-bottom: 1em;
 		}
 		#saveinfo {
+			display: inline-block;
 			font-size: smaller;
 		}
 	</style>
@@ -87,11 +93,11 @@
 	</script>
 	<script id="templateWeapon" type="x-template">
 		<div class="w" id="sn-$sn">
-			<span class="wname">$name <span class="wlvl"></span></span>
 			<span class="bullets"><span class="bullet"></span><span class="bullet"></span><span
 					class="bullet"></span><span class="bullet"></span><span class="bullet"></span><span
 					class="bullet"></span><span class="bullet"></span><span class="bullet"></span><span
-					class="bullet"></span><span class="bullet"></span></span></div>
+					class="bullet"></span><span class="bullet"></span></span>
+			<span class="wname">$name <span class="wlvl"></span></span></div>
 	</script>
 	<script id="templateChar" type="x-template">
 		<div class="w" id="sn-$sn">
