@@ -37,7 +37,7 @@ function createWeaponDisplay() {
 		const wcatDiv = template('templateWCat', {wcat: cat.type}).inject(weaponsDiv)
 		cat.ws.forEach(w => {
 			template('templateWeapon', w)
-				.addEvent('click', incWeapon)
+				.addEvent('mousedown', incWeapon)
 				.addEvent('mousedown', e => e.preventDefault()) // stop highlighting
 				.inject(wcatDiv)
 		})
@@ -47,7 +47,7 @@ function createCharDisplay() {
 	const weaponsDiv = $('chars')
 	mpchars.forEach(w => {
 		template('templateChar', w)
-			.addEvent('click', incChar)
+			.addEvent('mousedown', incChar)
 			.addEvent('mousedown', e => e.preventDefault()) // stop highlighting
 			.inject(weaponsDiv)
 	})
