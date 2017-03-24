@@ -1,12 +1,11 @@
 /**
  * Created by aval on 11.03.2017.
  */
-declare const weaponTypes: { type: string, ws: { name: string, sn: string }[] }[]
 declare const mpchars: { names: string, sn: string, startlvl: int }[]
 const MooEl: ElementConstructor = Element
 function valuesFromHash(hash: string): { [sn: string]: int } {
 	const values = {}
-	getAllWeapons().forEach(w => {assert(!values.hasOwnProperty(w.sn), w.sn), values[w.sn] = 0})
+	weapons.forEach(w => {assert(!values.hasOwnProperty(w.sn), w.sn), values[w.sn] = w.startlvl})
 	mpchars.forEach(w => {assert(!values.hasOwnProperty(w.sn), w.sn), values[w.sn] = w.startlvl || 0})
 
 	const regex = /([A-Za-z]+)([0-9]{1,2})/g
@@ -21,15 +20,20 @@ function valuesFromHash(hash: string): { [sn: string]: int } {
 	return values
 }
 const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X']
+const cats = {SR: 'Sniper Rifles', AR: 'Assault Rifles', P: 'Pistols', SG: 'Shotguns'}
+const weapons = $('wstats').text.trim().split(/\r?\n/).map(line => {
+	const cols = line.split('\t');
+	let i = 0;
+	return {type: cols[i++], sn: cols[i++], rarity: cols[i++], name: cols[i++], startlvl: parseInt(cols[i++]) || 0}})
+	.sort((a, b) => a.name.localeCompare(b.name))
+const weaponTypes:{ type: string, ws: { name: string, sn: string }[] }[] =
+	Object.getOwnPropertyNames(cats).map(sn => ({type: cats[sn], ws: weapons.filter(w => w.type == sn)}))
 function hashFromValues(values: { [sn: string]:int }): string {
 	let c
 	return Object.getOwnPropertyNames(values)
 		.filter(sn => values[sn] !== ((c = mpchars.find(e => e.sn == sn)) && c.startlvl || 0))
 		.map(sn => sn + values[sn])
 		.join('')
-}
-function getAllWeapons() {
-	return weaponTypes.map(cat => cat.ws).concatenated()
 }
 function createWeaponDisplay() {
 	const weaponsDiv = $('weapons')
@@ -55,7 +59,7 @@ function createCharDisplay() {
 function incWeapon(e: DOMEvent) {
 	const sn = e.event.currentTarget.id.match(/sn-(.*)/)[1]
 	assert(sn)
-	const newValue = (values[sn] + 1) % 11
+	const newValue = Math.max((values[sn] + 1) % 11, weapons.find(w => w.sn == sn).startlvl)
 	values[sn] = newValue
 	save()
 	updateWeapon(sn, newValue)
@@ -88,11 +92,11 @@ function save() {
 	updateSaveMode()
 }
 function totalUnlocks(values) {
-	return (getAllWeapons().map(({sn}) => values[sn]).sum()
+	return (weapons.map(w => values[w.sn] - w.startlvl).sum()
 		+ mpchars.map(c => values[c.sn] - (c.startlvl || 0)).sum())
 }
 function maxUnlocks() {
-	return (getAllWeapons().length * 10
+	return (weapons.length * 10
 	 + mpchars.map(c => 5 - (c.startlvl || 0)).sum())
 }
 function updateWeapon(sn: string, value: int) {
@@ -150,7 +154,7 @@ function saveToCookie() {
 		`Overwrite current cookie (${cookiePercent}% unlocked) with the hash (${hashPercent}% unlocked)?`)) {
 		window.location.hash = ''
 		values = cookieValues
-		getAllWeapons().forEach(w => {
+		weapons.forEach(w => {
 			updateWeapon(w.sn, values[w.sn])
 		})
 		mpchars.forEach(w => {
@@ -171,7 +175,7 @@ function load() {
 	}
 	save()
 
-	getAllWeapons().forEach(w => {
+	weapons.forEach(w => {
 		updateWeapon(w.sn, values[w.sn])
 	})
 	mpchars.forEach(w => {
