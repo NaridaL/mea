@@ -138,6 +138,7 @@ function template(templateName, map): HTMLElement {
 }
 function save() {
 	document.title = 'MEA MP ' + prog(totalUnlocks(values), maxUnlocks())
+	$('totaltotal').set('text', prog(totalUnlocks(values), maxUnlocks()))
 	let hash = hashFromValues(values)
 	if (modeHash) {
 		window.location.hash = '#' + hash
