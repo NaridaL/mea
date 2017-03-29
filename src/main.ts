@@ -137,6 +137,10 @@ function template(templateName, map): HTMLElement {
 	return $(new MooEl('div', {html: html.trim()}).firstChild)
 
 }
+function equalObjects(a, b) {
+	const aKeys = Object.getOwnPropertyNames(a), bKeys = Object.getOwnPropertyNames(b)
+	return aKeys.length === bKeys.length && aKeys.every(ak => a[ak] === b[ak])
+}
 function save() {
 	document.title = 'MEA MP ' + prog(totalUnlocks(values), maxUnlocks())
 	$('totaltotal').set('text', prog(totalUnlocks(values), maxUnlocks()))
@@ -225,10 +229,11 @@ window.onload = function () {
 }
 function saveToCookie() {
 	const match = document.cookie && document.cookie.match(/unlocks=(.*)/), cookieHash = match && match[1]
-	let cookieValues = valuesFromHash(cookieHash || '')
+	const cookieValues = valuesFromHash(cookieHash || '')
+	const hashValues = valuesFromHash(window.location.hash.substr(1))
 	const cookiePercent = Math.round(totalUnlocks(cookieValues) / maxUnlocks() * 100)
-	const hashPercent = Math.round(totalUnlocks(valuesFromHash(window.location.hash.substr(1))) / maxUnlocks() * 100)
-	if (!cookiePercent || confirm(
+	const hashPercent = Math.round(totalUnlocks(hashValues) / maxUnlocks() * 100)
+	if (!cookiePercent || equalObjects(cookieValues, hashValues)|| confirm(
 		`Overwrite current cookie (${cookiePercent}% unlocked) with the hash (${hashPercent}% unlocked)?`)) {
 		window.location.hash = ''
 		values = cookieValues
