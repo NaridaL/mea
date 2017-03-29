@@ -21,8 +21,9 @@ const weapons = $('wstats').text.trim().split(/\r?\n/).map(line => {
 const mods = $('mstats').text.trim().split(/\r?\n/).map(line => {
     const cols = line.split('\t');
     let i = 0;
-    return { rarity: cols[i++], sn: cols[i++], name: cols[i++], startlvl: 0 };
-});
+    return { rarity: cols[i++], sn: cols[i++], category: cols[i++], name: cols[i++], startlvl: 0 };
+})
+    .sort((a, b) => a.category.localeCompare(b.category) || a.rarity - b.rarity || a.name.localeCompare(b.name));
 const all = weapons.concat(mods, mpchars, inv);
 const weaponTypes = Object.getOwnPropertyNames(cats).map(sn => ({ type: cats[sn], ws: weapons.filter(w => w.type == sn) }));
 function valuesFromHash(hash) {
@@ -144,7 +145,7 @@ function totalUnlocks(values) {
     return all.map(w => values[w.sn] - w.startlvl).sum();
 }
 function maxUnlocks() {
-    return all.map(e => (weapons.includes(e) || mods.includes(e) ? 10 : 5) - e.startlvl).sum();
+    return all.map(e => (inv.includes(e) ? 5 : 10) - e.startlvl).sum();
 }
 function prog(prog, total) {
     return prog + '/' + total + ' ' + Math.round(prog / total * 100) + '%';
