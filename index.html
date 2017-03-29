@@ -5,6 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
+
 	<script id="wstats" type="text/plain">
 AR	Avg	0	M-8 AVENGER	1
 AR	Cln	1	CYCLONE
@@ -53,7 +54,27 @@ SR	Val	3	N7 VALIANT
 SR	Van	2	VANQUISHER
 SR	Vpr	0	VIPER	1
 SG	Ruz	1	RUZAD	</script>
-
+	<script id="mstats" type="text/plain">
+2	abr	AR BARREL
+1	amg	AR MAGAZINE
+1	arv	AR RECEIVER
+0	asp	AR SCOPE
+0	ask	AR STOCK
+2	pbr	PISTOL BARREL
+1	pmg	PISTOL MAGAZINE
+1	prv	PISTOL RECEIVER
+0	psp	PISTOL SCOPE
+0	pmo	PISTOL MELEE OPTIMIZER
+0	smo	SHOTGUN MELEE OPTIMIZER
+2	sbr	SHOTGUN BARREL
+1	srv	SHOTGUN RECEIVER
+0	sch	SHOTGUN SMART CHOKE
+1	ssc	SHOTGUN SPARE CLIP
+2	rbr	SR BARREL
+0	rsp	SR SCOPE
+1	rsc	SR SPARE THERMAL CLIP
+1	rrv	SR RECEIVER
+0	rul	SR ULTRA-LIGHT MATERIALS</script>
 	<script type="text/javascript" src="lib/toSource.js"></script>
 	<script type="text/javascript" src="lib/MooTools-Core-1.6.0.js"></script>
 	<script type="text/javascript" src="out/NLA.js"></script>
@@ -82,6 +103,19 @@ SG	Ruz	1	RUZAD	</script>
 		body {
 			font-family: EASSans, Verdana, sans-serif;
 			column-width: 360px;
+		}
+
+		.rarity0 {
+			color: brown;
+		}
+		.rarity1 {
+			color: silver;
+		}
+		.rarity2 {
+			color: gold;
+		}
+		.rarity3 {
+			color: black;
 		}
 
 		.w {
@@ -144,13 +178,25 @@ SG	Ruz	1	RUZAD	</script>
 					class="bullet"></span><span class="bullet"></span><span class="bullet"></span><span
 					class="bullet"></span><span class="bullet"></span><span class="bullet"></span><span
 					class="bullet"></span><span class="bullet"></span></span>
-			<span class="wname">$name <span class="wlvl"></span></span></div>
+			<span class="wname rarity$rarity">$name <span class="wlvl"></span></span></div>
 	</script>
 	<script id="templateChar" type="x-template">
 		<div class="w" id="sn-$sn">
-			<span class="wname">$name</span>
+			<span class="wname rarity$rarity">$name</span>
 			<span class="bullets"><span class="bullet">1</span><span class="bullet">2</span><span
 					class="bullet">3</span><span class="bullet">P</span><span class="bullet">L</span></span></div>
+	</script>
+	<script id="templateMod" type="x-template">
+		<div class="w" id="sn-$sn">
+			<span class="wname rarity$rarity">$name</span>
+			<span class="bullets"><span class="bullet"></span><span class="bullet"></span><span
+					class="bullet"></span><span class="bullet"></span><span class="bullet"></span></span></div>
+	</script>
+	<script id="templateInv" type="x-template">
+		<div class="w" id="sn-$sn">
+			<span class="wname rarity$rarity">$name</span>
+			<span class="bullets"><span class="bullet"></span><span class="bullet"></span><span
+					class="bullet"></span><span class="bullet"></span><span class="bullet"></span></span></div>
 	</script>
 </head>
 <body>
@@ -158,5 +204,7 @@ SG	Ruz	1	RUZAD	</script>
 	<div id="weapons"></div>
 
 	<div id="chars"><h3>Characters <span id="charTotal"></span></h3></div>
+	<div id="mods"><h3>Weapon Mods <span id="modTotal"></span></h3></div>
+	<div id="inv"><h3>Inventory <span id="invTotal"></span></h3></div>
 </body>
 </html>
