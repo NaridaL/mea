@@ -60,21 +60,21 @@ SG	Ruz	1	RUZAD	</script>
 1	arv	AR RECEIVER
 0	asp	AR SCOPE
 0	ask	AR STOCK
-2	pbr	PISTOL BARREL
-1	pmg	PISTOL MAGAZINE
-1	prv	PISTOL RECEIVER
-0	psp	PISTOL SCOPE
-0	pmo	PISTOL MELEE OPTIMIZER
-0	smo	SHOTGUN MELEE OPTIMIZER
-2	sbr	SHOTGUN BARREL
-1	srv	SHOTGUN RECEIVER
-0	sch	SHOTGUN SMART CHOKE
-1	ssc	SHOTGUN SPARE CLIP
+2	pbr	P BARREL
+1	pmg	P MAGAZINE
+1	prv	P RECEIVER
+0	psp	P SCOPE
+0	pmo	P MELEE OPTIMIZER
+0	smo	SG MELEE OPTIMIZER
+2	sbr	SG BARREL
+1	srv	SG RECEIVER
+0	sch	SG SMART CHOKE
+1	ssc	SG SPARE CLIP
 2	rbr	SR BARREL
 0	rsp	SR SCOPE
-1	rsc	SR SPARE THERMAL CLIP
+1	rsc	SR SPARE CLIP
 1	rrv	SR RECEIVER
-0	rul	SR ULTRA-LIGHT MATERIALS</script>
+0	rul	SR ULM</script>
 	<script type="text/javascript" src="lib/toSource.js"></script>
 	<script type="text/javascript" src="lib/MooTools-Core-1.6.0.js"></script>
 	<script type="text/javascript" src="out/NLA.js"></script>
@@ -183,14 +183,18 @@ SG	Ruz	1	RUZAD	</script>
 	<script id="templateChar" type="x-template">
 		<div class="w" id="sn-$sn">
 			<span class="wname rarity$rarity">$name</span>
-			<span class="bullets"><span class="bullet">1</span><span class="bullet">2</span><span
-					class="bullet">3</span><span class="bullet">P</span><span class="bullet">L</span></span></div>
+			<span class="bullets"><span class="bullet"></span><span class="bullet"></span><span
+					class="bullet"></span><span class="bullet"></span><span class="bullet"></span><span
+					class="bullet"></span><span class="bullet"></span><span class="bullet"></span><span
+					class="bullet"></span><span class="bullet"></span></span></div>
 	</script>
 	<script id="templateMod" type="x-template">
 		<div class="w" id="sn-$sn">
 			<span class="wname rarity$rarity">$name</span>
 			<span class="bullets"><span class="bullet"></span><span class="bullet"></span><span
-					class="bullet"></span><span class="bullet"></span><span class="bullet"></span></span></div>
+					class="bullet"></span><span class="bullet"></span><span class="bullet"></span><span
+					class="bullet"></span><span class="bullet"></span><span class="bullet"></span><span
+					class="bullet"></span><span class="bullet"></span></span></div>
 	</script>
 	<script id="templateInv" type="x-template">
 		<div class="w" id="sn-$sn">

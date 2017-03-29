@@ -107,7 +107,7 @@ function incInv(e) {
 function incChar(e) {
     const sn = e.event.currentTarget.id.match(/sn-(.*)/)[1];
     assert(sn);
-    const newValue = Math.max((values[sn] + 1) % 6, mpchars.find(c => c.sn == sn).startlvl || 0);
+    const newValue = Math.max((values[sn] + 1) % 11, mpchars.find(c => c.sn == sn).startlvl || 0);
     values[sn] = newValue;
     save();
     updateChar(sn, newValue);
@@ -115,7 +115,7 @@ function incChar(e) {
 function incMod(e) {
     const sn = e.event.currentTarget.id.match(/sn-(.*)/)[1];
     assert(sn);
-    const newValue = Math.max((values[sn] + 1) % 6, mods.find(c => c.sn == sn).startlvl);
+    const newValue = Math.max((values[sn] + 1) % 11, mods.find(c => c.sn == sn).startlvl);
     values[sn] = newValue;
     save();
     updateMod(sn, newValue);
@@ -144,7 +144,7 @@ function totalUnlocks(values) {
     return all.map(w => values[w.sn] - w.startlvl).sum();
 }
 function maxUnlocks() {
-    return all.map(w => (weapons.includes(w) ? 10 : 5) - w.startlvl).sum();
+    return all.map(e => (weapons.includes(e) || mods.includes(e) ? 10 : 5) - e.startlvl).sum();
 }
 function prog(prog, total) {
     return prog + '/' + total + ' ' + Math.round(prog / total * 100) + '%';
