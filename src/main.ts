@@ -148,12 +148,10 @@ function save() {
 	updateSaveMode()
 }
 function totalUnlocks(values) {
-	return (weapons.map(w => values[w.sn] - w.startlvl).sum()
-		+ mpchars.map(c => values[c.sn] - (c.startlvl || 0)).sum())
+	return all.map(w => values[w.sn] - w.startlvl).sum()
 }
 function maxUnlocks() {
-	return (weapons.length * 10
-	 + mpchars.map(c => 5 - (c.startlvl || 0)).sum())
+	return all.map(w => (weapons.includes(w) ? 10 : 5) - w.startlvl).sum()
 }
 function prog(prog, total) {
 	return prog + '/' + total + ' ' + Math.round(prog / total * 100) + '%'
