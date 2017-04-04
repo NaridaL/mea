@@ -3,35 +3,41 @@
  */
 const MooEl = Element;
 const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
-mpchars.forEach(char => char.startlvl = char.startlvl || 0);
+mpchars.forEach(char => (char.min = char.min || 0, char.max = 10));
+const equ = [
+    { 'sn': 'awa', rarity: 1, 'name': 'Adaptive War Amp' },
+    { 'sn': 'cbu', rarity: 2, 'name': 'Combative Upgrade' },
+    { 'sn': 'egk', rarity: 1, 'name': 'Engineering Kit' },
+    { 'sn': 'grl', rarity: 2, 'name': 'Guerrilla Upgrade' },
+    { 'sn': 'jgg', rarity: 2, 'name': 'Juggernaut Shield' },
+    { 'sn': 'tcs', rarity: 1, 'name': 'Thermal Clip Storage' }
+];
+equ.forEach(i => (i.min = 0, i.rarity = 0, i.max = 1));
 const inv = [
     { sn: 'c', name: 'Cobra' },
     { sn: 'm', name: 'Medigel' },
     { sn: 'a', name: 'Ammo Kit' },
     { sn: 's', name: 'Shield Boost' }
 ];
-inv.forEach(i => (i.startlvl = 2, i.rarity = 0));
+inv.forEach(i => (i.min = 2, i.rarity = 0, i.max = 5));
 const cats = { AR: 'Assault Rifles', P: 'Pistols', SG: 'Shotguns', SR: 'Sniper Rifles' };
 const weapons = $('wstats').text.trim().split(/\r?\n/).map(line => {
     const cols = line.split('\t');
     let i = 0;
-    return { type: cols[i++], sn: cols[i++], rarity: cols[i++], name: cols[i++], startlvl: parseInt(cols[i++]) || 0 };
+    return { type: cols[i++], sn: cols[i++], rarity: cols[i++], name: cols[i++], min: parseInt(cols[i++]) || 0, max: 10 };
 })
     .sort((a, b) => a.rarity - b.rarity || a.name.localeCompare(b.name));
 const mods = $('mstats').text.trim().split(/\r?\n/).map(line => {
     const cols = line.split('\t');
     let i = 0;
-    return { rarity: cols[i++], sn: cols[i++], category: cols[i++], name: cols[i++], startlvl: 0 };
+    return { rarity: cols[i++], sn: cols[i++], category: cols[i++], name: cols[i++], min: 0, max: 10 };
 })
     .sort((a, b) => a.category.localeCompare(b.category) || a.rarity - b.rarity || a.name.localeCompare(b.name));
-const all = weapons.concat(mods, mpchars, inv);
+const all = weapons.concat(mods, mpchars, inv, equ);
 const weaponTypes = Object.getOwnPropertyNames(cats).map(sn => ({ type: cats[sn], ws: weapons.filter(w => w.type == sn) }));
 function valuesFromHash(hash) {
     const values = {};
-    weapons.forEach(e => { assert(!values.hasOwnProperty(e.sn), e.sn), values[e.sn] = e.startlvl; });
-    mpchars.forEach(e => { assert(!values.hasOwnProperty(e.sn), e.sn), values[e.sn] = e.startlvl; });
-    mods.forEach(e => { assert(!values.hasOwnProperty(e.sn), e.sn), values[e.sn] = e.startlvl; });
-    inv.forEach(e => { assert(!values.hasOwnProperty(e.sn), e.sn), values[e.sn] = e.startlvl; });
+    all.forEach(e => { assert(!values.hasOwnProperty(e.sn), e.sn), values[e.sn] = e.min; });
     const regex = /([A-Za-z]+)([0-9]{1,2})/g;
     let match;
     while (match = regex.exec(hash)) {
@@ -46,7 +52,7 @@ function valuesFromHash(hash) {
 function hashFromValues(values) {
     let c;
     return Object.getOwnPropertyNames(values)
-        .filter(sn => values[sn] !== all.find(e => e.sn == sn).startlvl)
+        .filter(sn => values[sn] !== all.find(e => e.sn == sn).min)
         .map(sn => sn + values[sn])
         .join('');
 }
@@ -62,29 +68,11 @@ function createWeaponDisplay() {
         });
     });
 }
-function createCharDisplay() {
-    const container = $('chars');
-    mpchars.forEach(w => {
-        template('templateChar', w)
-            .addEvent('mousedown', incChar)
-            .addEvent('mousedown', e => e.preventDefault()) // stop highlighting
-            .inject(container);
-    });
-}
-function createModDisplay() {
-    const container = $('mods');
-    mods.forEach(w => {
-        template('templateMod', w)
-            .addEvent('mousedown', incMod)
-            .addEvent('mousedown', e => e.preventDefault()) // stop highlighting
-            .inject(container);
-    });
-}
-function createInvDisplay() {
-    const container = $('inv');
-    inv.forEach(w => {
-        template('templateInv', w)
-            .addEvent('mousedown', incInv)
+function createDisplay(divID, templateID, cat) {
+    const container = $(divID);
+    cat.forEach(w => {
+        template(templateID, w)
+            .addEvent('mousedown', e => inc(e, cat))
             .addEvent('mousedown', e => e.preventDefault()) // stop highlighting
             .inject(container);
     });
@@ -92,34 +80,18 @@ function createInvDisplay() {
 function incWeapon(e) {
     const sn = e.event.currentTarget.id.match(/sn-(.*)/)[1];
     assert(sn);
-    const newValue = Math.max((values[sn] + 1) % 11, weapons.find(w => w.sn == sn).startlvl);
+    const newValue = Math.max((values[sn] + 1) % 11, weapons.find(w => w.sn == sn).min);
     values[sn] = newValue;
     save();
     updateWeapon(sn, newValue);
 }
-function incInv(e) {
+function inc(e, cat) {
     const sn = e.event.currentTarget.id.match(/sn-(.*)/)[1];
     assert(sn);
-    const newValue = Math.max((values[sn] + 1) % 6, inv.find(w => w.sn == sn).startlvl);
+    const newValue = Math.max((values[sn] + 1) % (all.find(c => c.sn == sn).max + 1), all.find(c => c.sn == sn).min);
     values[sn] = newValue;
     save();
-    updateInv(sn, newValue);
-}
-function incChar(e) {
-    const sn = e.event.currentTarget.id.match(/sn-(.*)/)[1];
-    assert(sn);
-    const newValue = Math.max((values[sn] + 1) % 11, mpchars.find(c => c.sn == sn).startlvl || 0);
-    values[sn] = newValue;
-    save();
-    updateChar(sn, newValue);
-}
-function incMod(e) {
-    const sn = e.event.currentTarget.id.match(/sn-(.*)/)[1];
-    assert(sn);
-    const newValue = Math.max((values[sn] + 1) % 11, mods.find(c => c.sn == sn).startlvl);
-    values[sn] = newValue;
-    save();
-    updateMod(sn, newValue);
+    update(sn, newValue, cat);
 }
 function template(templateName, map) {
     let html = $(templateName).text;
@@ -146,10 +118,10 @@ function save() {
     updateSaveMode();
 }
 function totalUnlocks(values) {
-    return all.map(w => values[w.sn] - w.startlvl).sum();
+    return all.map(w => values[w.sn] - w.min).sum();
 }
 function maxUnlocks() {
-    return all.map(e => (inv.includes(e) ? 5 : 10) - e.startlvl).sum();
+    return all.map(e => (e.max) - e.min).sum();
 }
 function prog(prog, total) {
     return prog + '/' + total + ' ' + Math.round(prog / total * 100) + '%';
@@ -164,32 +136,14 @@ function updateWeapon(sn, value) {
     const ww = weaponTypes.find(wt => wt.type == wcat).ws;
     div.getParent().getElement('.prog').set('text', prog(ww.map(w => values[w.sn]).sum(), ww.length * 10));
 }
-function updateChar(sn, value) {
+function update(sn, value, cat) {
     const div = $('sn-' + sn);
     div.getElements('.bullet').forEach((el, i) => {
         el.toggleClass('on', i < value);
     });
-    const maxUnlocks = mpchars.map(c => 5 - c.startlvl).sum();
-    const unlocks = mpchars.map(c => values[c.sn] - c.startlvl).sum();
-    $('charTotal').set('text', prog(unlocks, maxUnlocks));
-}
-function updateMod(sn, value) {
-    const div = $('sn-' + sn);
-    div.getElements('.bullet').forEach((el, i) => {
-        el.toggleClass('on', i < value);
-    });
-    const maxUnlocks = 5 * mods.length;
-    const unlocks = mods.map(c => values[c.sn] - c.startlvl).sum();
-    $('modTotal').set('text', prog(unlocks, maxUnlocks));
-}
-function updateInv(sn, value) {
-    const div = $('sn-' + sn);
-    div.getElements('.bullet').forEach((el, i) => {
-        el.toggleClass('on', i < value);
-    });
-    const maxUnlocks = inv.map(c => 5 - c.startlvl).sum();
-    const unlocks = inv.map(c => values[c.sn] - c.startlvl).sum();
-    $('invTotal').set('text', prog(unlocks, maxUnlocks));
+    const maxUnlocks = cat.map(c => c.max - c.min).sum();
+    const unlocks = cat.map(c => values[c.sn] - c.min).sum();
+    div.getParent().getElement('.total').set('text', prog(unlocks, maxUnlocks));
 }
 function updateSaveMode() {
     let hash = hashFromValues(values);
@@ -209,9 +163,10 @@ let values = {};
 let modeHash = !!window.location.hash;
 window.onload = function () {
     createWeaponDisplay();
-    createCharDisplay();
-    createModDisplay();
-    createInvDisplay();
+    createDisplay('chars', 'templateChar', mpchars);
+    createDisplay('mods', 'templateMod', mods);
+    createDisplay('inv', 'templateInv', inv);
+    createDisplay('equ', 'templateEqu', equ);
     load();
 };
 function saveToCookie() {
@@ -226,14 +181,10 @@ function saveToCookie() {
         weapons.forEach(w => {
             updateWeapon(w.sn, values[w.sn]);
         });
-        mpchars.forEach(w => {
-            updateChar(w.sn, values[w.sn]);
-        });
-        mods.forEach(w => {
-            updateMod(w.sn, values[w.sn]);
-        });
-        mods.forEach(w => {
-            updateInv(w.sn, values[w.sn]);
+        [mpchars, mods, inv, equ].forEach(cat => {
+            cat.forEach(c => {
+                update(c.sn, values[c.sn], cat);
+            });
         });
         modeHash = false;
         save();
@@ -253,14 +204,10 @@ function load() {
     weapons.forEach(w => {
         updateWeapon(w.sn, values[w.sn]);
     });
-    mpchars.forEach(w => {
-        updateChar(w.sn, values[w.sn]);
-    });
-    mods.forEach(w => {
-        updateMod(w.sn, values[w.sn]);
-    });
-    inv.forEach(w => {
-        updateInv(w.sn, values[w.sn]);
+    [mpchars, mods, inv, equ].forEach(cat => {
+        cat.forEach(c => {
+            update(c.sn, values[c.sn], cat);
+        });
     });
 }
 window.addEventListener("hashchange", load, false);

@@ -7,38 +7,52 @@ const MooEl: ElementConstructor = Element
 
 const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X']
 
+type X =  { name: string, sn: string, min: int, max: int, rarity: int }
 
-declare const mpchars: { name: string, sn: string, startlvl: int, rarity: int }[]
-mpchars.forEach(char => char.startlvl = char.startlvl || 0)
-const inv: { name: string, sn: string, startlvl?: int, rarity?: int }[] = [
-	{sn: 'c', name: 'Cobra'},
-	{sn: 'm', name: 'Medigel'},
-	{sn: 'a', name: 'Ammo Kit'},
-	{sn: 's', name: 'Shield Boost'}]
-inv.forEach(i => (i.startlvl = 2, i.rarity = 0))
+declare const mpchars: X[]
+mpchars.forEach(char => (char.min = char.min || 0, char.max = 10))
+
+const equ: X[] = [
+    {'sn': 'awa', rarity: 1, 'name': 'Adaptive War Amp'},
+    {'sn': 'cbu', rarity: 2, 'name': 'Combative Upgrade'},
+    {'sn': 'egk', rarity: 1, 'name': 'Engineering Kit'},
+    {'sn': 'grl', rarity: 2, 'name': 'Guerrilla Upgrade'},
+    {'sn': 'jgg', rarity: 2, 'name': 'Juggernaut Shield'},
+    {'sn': 'tcs', rarity: 1, 'name': 'Thermal Clip Storage'}] as any
+equ.forEach(i => (i.min = 0, i.rarity = 0, i.max = 1))
+
+const inv: X[] = [
+    {sn: 'c', name: 'Cobra'},
+    {sn: 'm', name: 'Medigel'},
+    {sn: 'a', name: 'Ammo Kit'},
+    {sn: 's', name: 'Shield Boost'}] as any
+inv.forEach(i => (i.min = 2, i.rarity = 0, i.max = 5))
+
 const cats = {AR: 'Assault Rifles', P: 'Pistols', SG: 'Shotguns', SR: 'Sniper Rifles'}
-const weapons = $('wstats').text.trim().split(/\r?\n/).map(line => {
-	const cols = line.split('\t');
-	let i = 0;
-	return {type: cols[i++], sn: cols[i++], rarity: cols[i++], name: cols[i++], startlvl: parseInt(cols[i++]) || 0}})
-	.sort((a, b) => a.rarity - b.rarity || a.name.localeCompare(b.name))
-const mods = $('mstats').text.trim().split(/\r?\n/).map(line => {
-	const cols = line.split('\t');
-	let i = 0;
-	return {rarity: cols[i++], sn: cols[i++], category: cols[i++], name: cols[i++], startlvl: 0}})
-	.sort((a, b) => a.category.localeCompare(b.category) || a.rarity - b.rarity || a.name.localeCompare(b.name))
-const all = weapons.concat(mods, mpchars, inv)
-const weaponTypes:{ type: string, ws: { name: string, sn: string }[] }[] =
-	Object.getOwnPropertyNames(cats).map(sn => ({type: cats[sn], ws: weapons.filter(w => w.type == sn)}))
+
+const weapons: X[] = $('wstats').text.trim().split(/\r?\n/).map(line => {
+    const cols = line.split('\t');
+    let i = 0;
+    return {type: cols[i++], sn: cols[i++], rarity: cols[i++], name: cols[i++], min: parseInt(cols[i++]) || 0, max: 10}
+})
+    .sort((a, b) => a.rarity - b.rarity || a.name.localeCompare(b.name))
+
+const mods: X[] = $('mstats').text.trim().split(/\r?\n/).map(line => {
+    const cols = line.split('\t');
+    let i = 0;
+    return {rarity: cols[i++], sn: cols[i++], category: cols[i++], name: cols[i++], min: 0, max: 10}
+})
+    .sort((a, b) => a.category.localeCompare(b.category) || a.rarity - b.rarity || a.name.localeCompare(b.name))
+
+const all: X[] = weapons.concat(mods, mpchars, inv, equ)
+const weaponTypes: { type: string, ws: { name: string, sn: string }[] }[] =
+    Object.getOwnPropertyNames(cats).map(sn => ({type: cats[sn], ws: weapons.filter(w => w.type == sn)}))
 
 
 
 function valuesFromHash(hash: string): { [sn: string]: int } {
 	const values = {}
-	weapons.forEach(e => {assert(!values.hasOwnProperty(e.sn), e.sn), values[e.sn] = e.startlvl})
-	mpchars.forEach(e => {assert(!values.hasOwnProperty(e.sn), e.sn), values[e.sn] = e.startlvl})
-	mods   .forEach(e => {assert(!values.hasOwnProperty(e.sn), e.sn), values[e.sn] = e.startlvl})
-	inv    .forEach(e => {assert(!values.hasOwnProperty(e.sn), e.sn), values[e.sn] = e.startlvl})
+	all.forEach(e => {assert(!values.hasOwnProperty(e.sn), e.sn), values[e.sn] = e.min})
 
 	const regex = /([A-Za-z]+)([0-9]{1,2})/g
 	let match
@@ -54,7 +68,7 @@ function valuesFromHash(hash: string): { [sn: string]: int } {
 function hashFromValues(values: { [sn: string]:int }): string {
 	let c
 	return Object.getOwnPropertyNames(values)
-		.filter(sn => values[sn] !== all.find(e => e.sn == sn).startlvl)
+		.filter(sn => values[sn] !== all.find(e => e.sn == sn).min)
 		.map(sn => sn + values[sn])
 		.join('')
 }
@@ -70,29 +84,11 @@ function createWeaponDisplay() {
 		})
 	})
 }
-function createCharDisplay() {
-	const container = $('chars')
-	mpchars.forEach(w => {
-		template('templateChar', w)
-			.addEvent('mousedown', incChar)
-			.addEvent('mousedown', e => e.preventDefault()) // stop highlighting
-			.inject(container)
-	})
-}
-function createModDisplay() {
-	const container = $('mods')
-	mods.forEach(w => {
-		template('templateMod', w)
-			.addEvent('mousedown', incMod)
-			.addEvent('mousedown', e => e.preventDefault()) // stop highlighting
-			.inject(container)
-	})
-}
-function createInvDisplay() {
-	const container = $('inv')
-	inv.forEach(w => {
-		template('templateInv', w)
-			.addEvent('mousedown', incInv)
+function createDisplay(divID: string, templateID: string, cat: X[]) {
+	const container = $(divID)
+	cat.forEach(w => {
+		template(templateID, w)
+			.addEvent('mousedown', e => inc(e, cat))
 			.addEvent('mousedown', e => e.preventDefault()) // stop highlighting
 			.inject(container)
 	})
@@ -100,34 +96,20 @@ function createInvDisplay() {
 function incWeapon(e: DOMEvent) {
 	const sn = e.event.currentTarget.id.match(/sn-(.*)/)[1]
 	assert(sn)
-	const newValue = Math.max((values[sn] + 1) % 11, weapons.find(w => w.sn == sn).startlvl)
+	const newValue = Math.max((values[sn] + 1) % 11, weapons.find(w => w.sn == sn).min)
 	values[sn] = newValue
 	save()
 	updateWeapon(sn, newValue)
 }
-function incInv(e: DOMEvent) {
-	const sn = e.event.currentTarget.id.match(/sn-(.*)/)[1]
-	assert(sn)
-	const newValue = Math.max((values[sn] + 1) % 6, inv.find(w => w.sn == sn).startlvl)
-	values[sn] = newValue
-	save()
-	updateInv(sn, newValue)
-}
-function incChar(e: DOMEvent) {
-	const sn = e.event.currentTarget.id.match(/sn-(.*)/)[1]
-	assert(sn)
-	const newValue = Math.max((values[sn] + 1) % 11, mpchars.find(c => c.sn == sn).startlvl || 0)
-	values[sn] = newValue
-	save()
-	updateChar(sn, newValue)
-}
-function incMod(e: DOMEvent) {
-	const sn = e.event.currentTarget.id.match(/sn-(.*)/)[1]
-	assert(sn)
-	const newValue = Math.max((values[sn] + 1) % 11, mods.find(c => c.sn == sn).startlvl)
-	values[sn] = newValue
-	save()
-	updateMod(sn, newValue)
+function inc(e: DOMEvent, cat: X[]) {
+    const sn = e.event.currentTarget.id.match(/sn-(.*)/)[1]
+    assert(sn)
+    const newValue = Math.max(
+        (values[sn] + 1) % (all.find(c => c.sn == sn).max + 1),
+        all.find(c => c.sn == sn).min)
+    values[sn] = newValue
+    save()
+    update(sn, newValue, cat)
 }
 function template(templateName, map): HTMLElement {
 	let html = $<HTMLScriptElement>(templateName).text
@@ -154,10 +136,10 @@ function save() {
 	updateSaveMode()
 }
 function totalUnlocks(values) {
-	return all.map(w => values[w.sn] - w.startlvl).sum()
+	return all.map(w => values[w.sn] - w.min).sum()
 }
 function maxUnlocks() {
-	return all.map(e => (inv.includes(e) ? 5 : 10) - e.startlvl).sum()
+	return all.map(e => (e.max) - e.min).sum()
 }
 function prog(prog, total) {
 	return prog + '/' + total + ' ' + Math.round(prog / total * 100) + '%'
@@ -175,35 +157,15 @@ function updateWeapon(sn: string, value: int) {
 		ww.map(w => values[w.sn]).sum(),
 		ww.length * 10))
 }
-function updateChar(sn: string, value: int) {
-	const div = $('sn-' + sn)
-	div.getElements('.bullet').forEach((el, i) => {
-		el.toggleClass('on', i < value)
-	})
+function update(sn: string, value: int, cat: X[]) {
+    const div = $('sn-' + sn)
+    div.getElements('.bullet').forEach((el, i) => {
+        el.toggleClass('on', i < value)
+    })
 
-	const maxUnlocks = mpchars.map(c => 5 - c.startlvl).sum()
-	const unlocks = mpchars.map(c => values[c.sn] - c.startlvl).sum()
-	$('charTotal').set('text', prog(unlocks, maxUnlocks))
-}
-function updateMod(sn: string, value: int) {
-	const div = $('sn-' + sn)
-	div.getElements('.bullet').forEach((el, i) => {
-		el.toggleClass('on', i < value)
-	})
-
-	const maxUnlocks = 5 * mods.length
-	const unlocks = mods.map(c => values[c.sn] - c.startlvl).sum()
-	$('modTotal').set('text', prog(unlocks, maxUnlocks))
-}
-function updateInv(sn: string, value: int) {
-	const div = $('sn-' + sn)
-	div.getElements('.bullet').forEach((el, i) => {
-		el.toggleClass('on', i < value)
-	})
-
-	const maxUnlocks = inv.map(c => 5 - c.startlvl).sum()
-	const unlocks = inv.map(c => values[c.sn] - c.startlvl).sum()
-	$('invTotal').set('text', prog(unlocks, maxUnlocks))
+    const maxUnlocks = cat.map(c => c.max - c.min).sum()
+    const unlocks = cat.map(c => values[c.sn] - c.min).sum()
+    div.getParent().getElement('.total').set('text', prog(unlocks, maxUnlocks))
 }
 function updateSaveMode() {
 	let hash = hashFromValues(values)
@@ -221,9 +183,10 @@ let values: { [sn: string]:int } = {}
 let modeHash = !!window.location.hash
 window.onload = function () {
 	createWeaponDisplay()
-	createCharDisplay()
-	createModDisplay()
-	createInvDisplay()
+    createDisplay('chars', 'templateChar', mpchars)
+    createDisplay('mods', 'templateMod', mods)
+    createDisplay('inv', 'templateInv', inv)
+    createDisplay('equ', 'templateEqu', equ)
 
 	load()
 }
@@ -237,18 +200,15 @@ function saveToCookie() {
 		`Overwrite current cookie (${cookiePercent}% unlocked) with the hash (${hashPercent}% unlocked)?`)) {
 		window.location.hash = ''
 		values = cookieValues
-		weapons.forEach(w => {
-			updateWeapon(w.sn, values[w.sn])
-		})
-		mpchars.forEach(w => {
-			updateChar(w.sn, values[w.sn])
-		})
-		mods.forEach(w => {
-			updateMod(w.sn, values[w.sn])
-		})
-		mods.forEach(w => {
-			updateInv(w.sn, values[w.sn])
-		})
+
+        weapons.forEach(w => {
+            updateWeapon(w.sn, values[w.sn])
+        })
+        ;[mpchars, mods, inv, equ].forEach(cat => {
+            cat.forEach(c => {
+                update(c.sn, values[c.sn], cat)
+            })
+        })
 		modeHash = false
 		save()
 	}
@@ -267,14 +227,10 @@ function load() {
 	weapons.forEach(w => {
 		updateWeapon(w.sn, values[w.sn])
 	})
-	mpchars.forEach(w => {
-		updateChar(w.sn, values[w.sn])
-	})
-	mods.forEach(w => {
-		updateMod(w.sn, values[w.sn])
-	})
-	inv.forEach(w => {
-		updateInv(w.sn, values[w.sn])
-	})
+    ;[mpchars, mods, inv, equ].forEach(cat => {
+        cat.forEach(c => {
+            update(c.sn, values[c.sn], cat)
+        })
+    })
 }
 window.addEventListener("hashchange", load, false);
