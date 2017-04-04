@@ -62,7 +62,7 @@ function createWeaponDisplay() {
         const wcatDiv = template('templateWCat', { wcat: cat.type }).inject(container);
         cat.ws.forEach(w => {
             template('templateWeapon', w)
-                .addEvent('mousedown', incWeapon)
+                .addEvent('mousedown', e => inc(e, cat.ws))
                 .addEvent('mousedown', e => e.preventDefault()) // stop highlighting
                 .inject(wcatDiv);
         });
@@ -76,14 +76,6 @@ function createDisplay(divID, templateID, cat) {
             .addEvent('mousedown', e => e.preventDefault()) // stop highlighting
             .inject(container);
     });
-}
-function incWeapon(e) {
-    const sn = e.event.currentTarget.id.match(/sn-(.*)/)[1];
-    assert(sn);
-    const newValue = Math.max((values[sn] + 1) % 11, weapons.find(w => w.sn == sn).min);
-    values[sn] = newValue;
-    save();
-    updateWeapon(sn, newValue);
 }
 function inc(e, cat) {
     const sn = e.event.currentTarget.id.match(/sn-(.*)/)[1];
@@ -118,31 +110,22 @@ function save() {
     updateSaveMode();
 }
 function totalUnlocks(values) {
-    return all.map(w => values[w.sn] - w.min).sum();
+    return all.map(e => values[e.sn]).sum();
 }
 function maxUnlocks() {
-    return all.map(e => (e.max) - e.min).sum();
+    return all.map(e => e.max).sum();
 }
 function prog(prog, total) {
     return prog + '/' + total + ' ' + Math.round(prog / total * 100) + '%';
-}
-function updateWeapon(sn, value) {
-    const div = $('sn-' + sn);
-    div.getElements('.bullet').forEach((el, i) => {
-        el.toggleClass('on', i < value);
-    });
-    div.getElement('.wlvl').set('text', value ? roman[value - 1] : '');
-    const wcat = div.getParent().id.match(/wcat-(.*)/)[1];
-    const ww = weaponTypes.find(wt => wt.type == wcat).ws;
-    div.getParent().getElement('.prog').set('text', prog(ww.map(w => values[w.sn]).sum(), ww.length * 10));
 }
 function update(sn, value, cat) {
     const div = $('sn-' + sn);
     div.getElements('.bullet').forEach((el, i) => {
         el.toggleClass('on', i < value);
     });
-    const maxUnlocks = cat.map(c => c.max - c.min).sum();
-    const unlocks = cat.map(c => values[c.sn] - c.min).sum();
+    div.getElements('.wlvl').set('text', value ? roman[value - 1] : '');
+    const maxUnlocks = cat.map(c => c.max).sum();
+    const unlocks = cat.map(c => values[c.sn]).sum();
     div.getParent().getElement('.total').set('text', prog(unlocks, maxUnlocks));
 }
 function updateSaveMode() {
@@ -178,10 +161,7 @@ function saveToCookie() {
     if (!cookiePercent || equalObjects(cookieValues, hashValues) || confirm(`Overwrite current cookie (${cookiePercent}% unlocked) with the hash (${hashPercent}% unlocked)?`)) {
         window.location.hash = '';
         values = cookieValues;
-        weapons.forEach(w => {
-            updateWeapon(w.sn, values[w.sn]);
-        });
-        [mpchars, mods, inv, equ].forEach(cat => {
+        weaponTypes.map(wt => wt.ws).concat([mpchars, mods, inv, equ]).forEach(cat => {
             cat.forEach(c => {
                 update(c.sn, values[c.sn], cat);
             });
@@ -201,10 +181,7 @@ function load() {
         modeHash = false;
     }
     save();
-    weapons.forEach(w => {
-        updateWeapon(w.sn, values[w.sn]);
-    });
-    [mpchars, mods, inv, equ].forEach(cat => {
+    weaponTypes.map(wt => wt.ws).concat([mpchars, mods, inv, equ]).forEach(cat => {
         cat.forEach(c => {
             update(c.sn, values[c.sn], cat);
         });
