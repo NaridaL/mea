@@ -19,7 +19,7 @@ const equ: X[] = [
     {'sn': 'grl', rarity: 2, 'name': 'Guerrilla Upgrade'},
     {'sn': 'jgg', rarity: 2, 'name': 'Juggernaut Shield'},
     {'sn': 'tcs', rarity: 1, 'name': 'Thermal Clip Storage'}] as any
-equ.forEach(i => (i.min = 0, i.rarity = 0, i.max = 1))
+equ.forEach(i => (i.min = 0, i.max = 1))
 
 const inv: X[] = [
     {sn: 'c', name: 'Cobra'},

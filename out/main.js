@@ -12,7 +12,7 @@ const equ = [
     { 'sn': 'jgg', rarity: 2, 'name': 'Juggernaut Shield' },
     { 'sn': 'tcs', rarity: 1, 'name': 'Thermal Clip Storage' }
 ];
-equ.forEach(i => (i.min = 0, i.rarity = 0, i.max = 1));
+equ.forEach(i => (i.min = 0, i.max = 1));
 const inv = [
     { sn: 'c', name: 'Cobra' },
     { sn: 'm', name: 'Medigel' },
