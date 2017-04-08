@@ -31,8 +31,8 @@ inv.forEach(i => (i.min = 2, i.rarity = 0, i.max = 5))
 const cats = {AR: 'Assault Rifles', P: 'Pistols', SG: 'Shotguns', SR: 'Sniper Rifles'}
 
 const weapons: X[] = $('wstats').text.trim().split(/\r?\n/).map(line => {
-    const cols = line.split('\t');
-    let i = 0;
+    const cols = line.split('\t')
+    let i = 0
     return {type: cols[i++], sn: cols[i++], rarity: cols[i++], name: cols[i++], min: parseInt(cols[i++]) || 0, max: 10}
 })
     .sort((a, b) => a.rarity - b.rarity || a.name.localeCompare(b.name))

@@ -53,6 +53,7 @@ SR	Shw	2	SHADOW
 SR	Val	3	N7 VALIANT
 SR	Van	2	VANQUISHER
 SR	Vpr	0	VIPER	1
+SR	Inf	3	INFERNO
 SG	Ruz	1	RUZAD	</script>
 	<script id="mstats" type="text/plain">
 2	abr	AR	BARREL
@@ -105,6 +106,10 @@ SG	Ruz	1	RUZAD	</script>
 			column-width: 360px;
 		}
 
+		h3 {
+			margin-bottom: 0.5em;
+		}
+
 		.rarity0 {
 			color: black;
 		}
@@ -124,8 +129,6 @@ SG	Ruz	1	RUZAD	</script>
 		}
 
 		.catname {
-			padding-left: 3em;
-			font-weight: bold;
 			clear: both;
 		}
 
@@ -173,7 +176,7 @@ SG	Ruz	1	RUZAD	</script>
 		}
 	</style>
 	<script id="templateWCat" type="x-template">
-		<div id="wcat-$wcat"><div class="catname">$wcat <span class="total"></span></div></div>
+		<div id="wcat-$wcat"><h3 class="catname">$wcat <span class="total"></span></h3></div>
 	</script>
 	<script id="templateWeapon" type="x-template">
 		<div class="w" id="sn-$sn">
