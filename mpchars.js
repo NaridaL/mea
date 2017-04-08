@@ -21,6 +21,7 @@ var mpchars = [
   {'rarity': 2, 'name': 'Turian Havoc Trooper', 'sn': 'THT'},
   {'rarity': 2, 'name': 'Asari Huntress', 'sn': 'AH'},
   {'rarity': 2, 'name': 'Angara Insurgent', 'sn': 'AI'},
+  {'rarity': 2, 'name': 'Salarian Architect', 'sn': 'SA'},
   {'rarity': 3, 'name': 'Asari Duelist', 'sn': 'AD'},
   {'rarity': 3, 'name': 'Angara Avenger', 'sn': 'AgA'},
   {'rarity': 3, 'name': 'Salarian Operator', 'sn': 'SO'},
