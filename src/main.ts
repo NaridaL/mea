@@ -14,11 +14,19 @@ mpchars.forEach(char => (char.min = char.min || 0, char.max = 10))
 
 const equ: X[] = [
     {'sn': 'awa', rarity: 1, 'name': 'Adaptive War Amp'},
-    {'sn': 'cbu', rarity: 2, 'name': 'Combative Upgrade'},
+    {'sn': 'cbu', rarity: 2, 'name': 'Combatives Upgrade'},
     {'sn': 'egk', rarity: 1, 'name': 'Engineering Kit'},
     {'sn': 'grl', rarity: 2, 'name': 'Guerrilla Upgrade'},
     {'sn': 'jgg', rarity: 2, 'name': 'Juggernaut Shield'},
-    {'sn': 'tcs', rarity: 1, 'name': 'Thermal Clip Storage'}] as any
+    {'sn': 'tcs', rarity: 1, 'name': 'Thermal Clip Storage'},
+    {'sn': 'acp', rarity: 2, 'name': 'Armored Compartments'},
+    {'sn': 'ara', rarity: 1, 'name': 'Assault Rifle Amp'},
+    {'sn': 'ehm', rarity: 1, 'name': 'Enhanced Munitions'},
+    {'sn': 'exp', rarity: 2, 'name': 'Expert Package'},
+    {'sn': 'psa', rarity: 2, 'name': 'Pistol/SMG Amp'},
+    {'sn': 'rpt', rarity: 2, 'name': 'Revive Pack Transmitter'},
+    {'sn': 'seh', rarity: 1, 'name': 'Shield Enhancer'},
+    {'sn': 'stu', rarity: 2, 'name': 'Shock Trooper Upgrade'}].sort((a, b) => a.rarity - b.rarity || a.name.localeCompare(b.name)) as any
 equ.forEach(i => (i.min = 0, i.max = 1))
 
 const inv: X[] = [
