@@ -11,6 +11,7 @@ type X =  { name: string, sn: string, min: int, max: int, rarity: int }
 
 declare const mpchars: X[]
 mpchars.forEach(char => (char.min = char.min || 0, char.max = 10))
+mpchars.sort((a, b) => a.rarity - b.rarity || a.name.localeCompare(b.name))
 
 const equ: X[] = [
     {'sn': 'awa', rarity: 1, 'name': 'Adaptive War Amp'},
@@ -26,7 +27,26 @@ const equ: X[] = [
     {'sn': 'psa', rarity: 2, 'name': 'Pistol/SMG Amp'},
     {'sn': 'rpt', rarity: 2, 'name': 'Revive Pack Transmitter'},
     {'sn': 'seh', rarity: 1, 'name': 'Shield Enhancer'},
-    {'sn': 'stu', rarity: 2, 'name': 'Shock Trooper Upgrade'}].sort((a, b) => a.rarity - b.rarity || a.name.localeCompare(b.name)) as any
+    {'sn': 'stu', rarity: 2, 'name': 'Shock Trooper Upgrade'},
+    {'sn': 'asl', rarity: 2, 'name': 'Assault Loadout'},
+    {'sn': 'bkp', rarity: 2, 'name': 'Berserker Package'},
+    {'sn': 'cmp', rarity: 2, 'name': 'Commando Package'},
+    {'sn': 'dsa', rarity: 1, 'name': 'Densified Ammunition'},
+    {'sn': 'gcp', rarity: 1, 'name': 'Grenade Capacity'},
+    {'sn': 'hyj', rarity: 1, 'name': 'Hydraulic Joints'},
+    {'sn': 'mba', rarity: 2, 'name': 'Martial Biotic Amp'},
+    {'sn': 'mlf', rarity: 1, 'name': 'Mental Focuser'},
+    {'sn': 'mlc', rarity: 1, 'name': 'Multicapacitor'},
+    {'sn': 'ocp', rarity: 2, 'name': 'Omni-Capacitor'},
+    {'sn': 'opp', rarity: 2, 'name': 'Operative Package'},
+    {'sn': 'sga', rarity: 1, 'name': 'Shotgun Amp'},
+    {'sn': 'sra', rarity: 1, 'name': 'Sniper Rifle Amp'},
+    {'sn': 'shp', rarity: 2, 'name': 'Stronghold Package'},
+    {'sn': 'ste', rarity: 1, 'name': 'Structural Economics'},
+    {'sn': 'svl', rarity: 2, 'name': 'Survivor Loadout'},
+    {'sn': 'vvi', rarity: 1, 'name': 'Vulnerability VI'},
+    {'sn': 'wfp', rarity: 2, 'name': 'Warfighter Package'},
+].sort((a, b) => a.rarity - b.rarity || a.name.localeCompare(b.name)) as any
 equ.forEach(i => (i.min = 0, i.max = 1))
 
 const inv: X[] = [

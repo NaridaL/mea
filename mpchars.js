@@ -29,4 +29,5 @@ var mpchars = [
   {'rarity': 3, 'name': 'Human Kineticist', 'sn': 'HK'},
   {'rarity': 3, 'name': 'Krogan Gladiator', 'sn': 'KG'},
   {'rarity': 3, 'name': 'Angara Exemplar', 'sn': 'AgE'},
+  {'rarity': 2, 'name': 'Batarian Scrapper', 'sn': 'BS'},
 ]
