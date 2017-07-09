@@ -136,9 +136,9 @@ SR	KHG	3	KISHOCK HARPOON GUN</script>
 			clear: both;
 		}
 
-		.catname {
-			clear: both;
-		}
+		/*.catname {*/
+			/*clear: both;*/
+		/*}*/
 
 		.wname {
 			width: 10em;
@@ -179,9 +179,32 @@ SR	KHG	3	KISHOCK HARPOON GUN</script>
 			display: inline-block;
 			font-size: smaller;
 		}
+		.progresscontainer {
+			width: 200px;
+			height: 1.3em;
+			background-color: #cbcbcb;
+			float: right;
+		}
+		.progressbar {
+			height: 1.3em;
+			background: repeating-linear-gradient(
+				90deg,
+				#ff671f,
+				#ff671f 20px,
+				#ff832c 20px,
+				#ff832c 40px
+			);
+		}
+		.total {
+			display: block;
+			margin-top: -1.3em;
+			text-align: center;
+			color: black;
+			font-weight: bold;
+		}
 	</style>
 	<script id="templateWCat" type="x-template">
-		<div id="wcat-$wcat"><h3 class="catname">$wcat <span class="total"></span></h3></div>
+		<div id="wcat-$wcat"><div class="progresscontainer"><div class="progressbar"></div><span class="total"></span></div><h3 class="catname">$wcat</h3></div>
 	</script>
 	<script id="templateWeapon" type="x-template">
 		<div class="w" id="sn-$sn">
@@ -220,12 +243,12 @@ SR	KHG	3	KISHOCK HARPOON GUN</script>
     </script>
 </head>
 <body>
-	<div id="header">MEA MP Checklist <span id="totaltotal"></span> <span id="saveinfo"></span></div>
+	<div id="header">MEA MP Checklist <div class="progresscontainer"><div class="progressbar"></div><span class="total"></span></div> <span id="saveinfo"></span></div>
 	<div id="weapons"></div>
 
-	<div id="chars"><h3>Characters <span class="total"></span></h3></div>
-	<div id="mods"><h3>Weapon Mods <span class="total"></span></h3></div>
-	<div id="inv"><h3>Inventory <span class="total"></span></h3></div>
-	<div id="equ"><h3>Equipment <span class="total"></span></h3></div>
+	<div id="chars"><div class="progresscontainer"><div class="progressbar"></div><span class="total"></span></div><h3>Characters</h3></div>
+	<div id="mods"><div class="progresscontainer"><div class="progressbar"></div><span class="total"></span></div><h3>Weapon Mods</h3></div>
+	<div id="inv"><div class="progresscontainer"><div class="progressbar"></div><span class="total"></span></div><h3>Inventory</h3></div>
+	<div id="equ"><div class="progresscontainer"><div class="progressbar"></div><span class="total"></span></div><h3>Equipment</h3></div>
 </body>
 </html>

@@ -145,7 +145,8 @@ function equalObjects(a, b) {
 }
 function save() {
 	document.title = 'MEA MP ' + prog(totalUnlocks(values), maxUnlocks())
-	$('totaltotal').set('text', prog(totalUnlocks(values), maxUnlocks()))
+	$$('#header .total').set('text', prog(totalUnlocks(values), maxUnlocks()))
+    $$('#header .progressbar').setStyle('width', '' + progPercent(totalUnlocks(values), maxUnlocks()))
 	let hash = hashFromValues(values)
 	if (modeHash) {
 		window.location.hash = '#' + hash
@@ -162,7 +163,10 @@ function maxUnlocks() {
 	return all.map(e => e.max).sum()
 }
 function prog(prog, total) {
-	return prog + '/' + total + ' ' + Math.round(prog / total * 100) + '%'
+    return prog + '/' + total + ' ' + Math.round(prog / total * 100) + '%'
+}
+function progPercent(prog, total) {
+    return '' + Math.round(prog / total * 100) + '%'
 }
 function update(sn: string, value: int, cat: X[]) {
     const div = $('sn-' + sn)
@@ -174,6 +178,7 @@ function update(sn: string, value: int, cat: X[]) {
     const maxUnlocks = cat.map(c => c.max).sum()
     const unlocks = cat.map(c => values[c.sn]).sum()
     div.getParent().getElement('.total').set('text', prog(unlocks, maxUnlocks))
+    div.getParent().getElement('.progressbar').setStyle('width', '' + progPercent(unlocks, maxUnlocks))
 }
 function updateSaveMode() {
 	let hash = hashFromValues(values)
