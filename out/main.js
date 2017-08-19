@@ -159,6 +159,10 @@ function update(sn, value, cat) {
     const unlocks = cat.map(c => values[c.sn]).sum();
     div.getParent().getElement('.total').set('text', prog(unlocks, maxUnlocks));
     div.getParent().getElement('.progressbar').setStyle('width', '' + progPercent(unlocks, maxUnlocks));
+    // hide weapon variants if lvl < 10
+    if (weaponTypes.some(wt => wt.ws == cat)) {
+        $$(`#sn-${sn}B, #sn-${sn}C, #sn-${sn}S`).toggleClass('displayNone', value < 10);
+    }
 }
 function updateSaveMode() {
     let hash = hashFromValues(values);
